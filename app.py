@@ -3,6 +3,10 @@ import gspread
 import json
 import os # Make sure 'os' and 'json' are imported at the top of your file
 from oauth2client.service_account import ServiceAccountCredentials
+# Add these imports at the top of your app.py if they aren't there
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
+from io import BytesIO
 from flask import (
     Flask, render_template, session, redirect, url_for,
     request, flash
@@ -89,6 +93,36 @@ def get_gsheet():
     client = gspread.authorize(creds)
     sheet = client.open(SHEET_NAME).sheet1
     return sheet
+# --- New function to upload to Google Drive ---
+def upload_to_drive_and_get_link(file_stream, filename):
+    """Uploads a file to Google Drive and returns a shareable link."""
+    
+    # Add the Drive scope to your existing scopes
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    # Use the same credentials setup as your get_gsheet() function
+    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    
+    try:
+        drive_service = build('drive', 'v3', credentials=creds)
+        
+        file_metadata = {'name': filename}
+        media = MediaIoBaseUpload(BytesIO(file_stream.read()), mimetype='image/jpeg', resumable=True)
+        
+        # Upload the file and get its ID and link
+        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id, webViewLink').execute()
+        
+        # Make the file publicly readable
+        file_id = file.get('id')
+        drive_service.permissions().create(fileId=file_id, body={'type': 'anyone', 'role': 'reader'}).execute()
+        
+        return file.get('webViewLink')
+        
+    except Exception as e:
+        print(f"An error occurred during file upload: {e}")
+        return None
 
 @app.route("/")
 def index():
@@ -164,14 +198,14 @@ def place_order():
     screenshot = request.files.get('screenshot')
     screenshot_filename = ""
     if screenshot and allowed_file(screenshot.filename):
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        base = name.replace(' ', '_') + '_' + contact.replace(' ', '_')
-        screenshot_filename = f"{base}_{screenshot.filename}"
-        screenshot_path = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
-        screenshot.save(screenshot_path)
-    else:
-        screenshot_filename = "No file or wrong type"
-    success = False
+        unique_filename = f"{name.replace(' ', '_')}_{contact}_{screenshot.filename}"
+        # Call the new function to upload the screenshot
+        drive_link = upload_to_drive_and_get_link(screenshot, unique_filename)
+        
+        if drive_link:
+            screenshot_link = drive_link
+        else:
+            screenshot_link = "Error uploading to Google Drive"
     try:
         sheet = get_gsheet()
         item_summary = "; ".join(f"{i['product']['name']} x{i['quantity']}" for i in cart_items)
@@ -179,7 +213,7 @@ def place_order():
         sheet.append_row([
             name, contact, email, address,
             item_summary, subtotal, DELIVERY_CHARGE, total,
-            upi_txn, screenshot_filename,
+            upi_txn, screenshot_link,
         ])
         success = True
     except Exception as e:
