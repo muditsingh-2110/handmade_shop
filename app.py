@@ -97,24 +97,27 @@ def get_gsheet():
 def upload_to_drive_and_get_link(file_stream, filename):
     """Uploads a file to Google Drive and returns a shareable link."""
     
-    # Add the Drive scope to your existing scopes
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive"
     ]
-    # Use the same credentials setup as your get_gsheet() function
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
     
     try:
+        # Securely load credentials from the environment variable
+        creds_json_str = os.environ.get('GCP_CREDS_JSON')
+        if not creds_json_str:
+            raise ValueError("GCP_CREDS_JSON environment variable not set!")
+        creds_info = json.loads(creds_json_str)
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_info, scope)
+
+        # Build the Drive service
         drive_service = build('drive', 'v3', credentials=creds)
         
         file_metadata = {'name': filename}
         media = MediaIoBaseUpload(BytesIO(file_stream.read()), mimetype='image/jpeg', resumable=True)
         
-        # Upload the file and get its ID and link
         file = drive_service.files().create(body=file_metadata, media_body=media, fields='id, webViewLink').execute()
         
-        # Make the file publicly readable
         file_id = file.get('id')
         drive_service.permissions().create(fileId=file_id, body={'type': 'anyone', 'role': 'reader'}).execute()
         
