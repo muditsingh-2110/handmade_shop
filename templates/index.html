@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}CHARMING BEADS{% endblock %}
+
+{% block content %}
+<!-- BANNER (change 'banner.jpg' and the text as needed) -->
+<div style="
+    position: relative;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 2em;
+    box-shadow: 0 4px 24px #fa7ba230;">
+    <img src="{{ url_for('static', filename='images/banner.jpg') }}"
+         alt="Charming Beads Banner"
+         style="width:100%; display:block; object-fit:cover; max-height:220px;">
+    <div style="
+        position: absolute;
+        left: 0; right: 0; top: 0; bottom: 0;
+        background: linear-gradient(90deg, #fa7ba290 10%, transparent 100%);
+        display: flex;
+        align-items: center; justify-content:left;
+        padding-left: 2.5em;">
+    </div>
+</div>
+
+<!-- HERO SECTION: IMAGES ABOVE BUTTONS -->
+<section class="hero-section" style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background: #fff0f6;
+    padding: 2.6em 1.2em 2em 1.2em;
+    margin-bottom: 2em;
+    box-shadow: 0 3px 24px #fa7ba230;">
+    <div class="hero-images" style="display: flex; gap: 2.2em; margin-bottom: 2em; flex-wrap: wrap;">
+        <img src="{{ url_for('static', filename='images/bracelet1.jpg') }}" alt="Bracelet" style="width: 130px; border-radius: 14px; box-shadow: 0 2px 11px #fa7ba224;">
+        <img src="{{ url_for('static', filename='images/charm1.jpg') }}" alt="Phone Charm" style="width: 85px; border-radius: 12px; box-shadow: 0 2px 11px #f682ac25;">
+        <img src="{{ url_for('static', filename='images/combo1.jpg') }}" alt="Keychain" style="width: 95px; border-radius: 12px; box-shadow: 0 1.5px 8px #e7548040;">
+    </div>
+    <h1 style="font-size: 2.2em; color: #e75480; font-weight: 700; margin-bottom: .4em; text-align: center;">
+        Unique accessories for every story—crafted with love.
+    </h1>
+    <p style="font-size: 1.12em; color: #5b385a; margin-bottom: 1.5em; text-align: center;">
+        Perfect for memorable new journeys!
+    </p>
+    <div class="nav-buttons" style="display: flex; flex-wrap: wrap; gap: 1.1em; margin-bottom: 0.6em; justify-content: center;">
+        <a href="{{ url_for('bracelets_page') }}" class="btn" style="font-size:1.04em;">Bracelets</a>
+        <a href="{{ url_for('charms_page') }}" class="btn" style="font-size:1.04em;">Phone Charms</a>
+        <a href="{{ url_for('combos_page') }}" class="btn" style="font-size:1.04em;">combos</a>
+        <a href="{{ url_for('mugs_page') }}" class="btn" style="font-size:1.04em;">Mugs</a>
+        <a href="{{ url_for('keyrings_page') }}" class="btn" style="font-size:1.04em;">Keyrings</a>
+
+    </div>
+</section>
+
+<!-- BESTSELLERS SECTION -->
+<section style="margin-top: 0.6em; text-align: center;">
+    <h2 style="color:#e75480; font-size: 2em; margin-bottom: 1.2em; font-weight: 600;">Shop Our Bestsellers</h2>
+    <div class="bestsellers-grid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+        gap: 2em;
+        justify-items: center;
+        max-width: 800px;
+        margin: 0 auto;">
+        <div style="background: #fff; border-radius: 17px; box-shadow: 0 2px 11px #fa7ba224; padding: 1.2em; min-width: 140px;">
+            <img src="{{ url_for('static', filename='images/bracelet2.jpg') }}" alt="Rose Quartz Bracelet" style="width: 112px; border-radius: 8px;">
+            <div style="margin:0.8em 0 0.2em;font-weight:500;color:#c14576;">Rose Quartz</div>
+            <div style="font-size:0.98em; color:#6d3154;">Healing, loving, elegant.</div>
+        </div>
+        <div style="background: #fff; border-radius: 17px; box-shadow: 0 2px 11px #fa7ba224; padding: 1.2em; min-width: 140px;">
+            <img src="{{ url_for('static', filename='images/charm2.jpg') }}" alt="Lucky Clover Charm" style="width: 78px; border-radius: 8px;">
+            <div style="margin:0.8em 0 0.2em;font-weight:500;color:#398a5a;">Lucky Clover</div>
+            <div style="font-size:0.98em; color:#297039;">Good luck always!</div>
+        </div>
+        <div style="background: #fff; border-radius: 17px; box-shadow: 0 2px 11px #fa7ba224; padding: 1.2em; min-width: 140px;">
+            <img src="{{ url_for('static', filename='images/mug1.jpg') }}" alt="Handpainted Mug" style="width: 88px; border-radius: 8px;">
+            <div style="margin:0.8em 0 0.2em;font-weight:500;color:#aa488c;">Handpainted Mug</div>
+            <div style="font-size:0.98em; color:#7e3467;">Pastel floral artwork.</div>
+        </div>
+    </div>
+</section>
+{% endblock %}

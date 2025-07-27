@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}CHARMING BEADS Combos{% endblock %}
+
+{% block content %}
+<button class="back-btn btn" onclick="window.history.back()">Back</button>
+<h2>Combos</h2>
+<div class="row">
+  {% for product in combos %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top" alt="{{ product.name }}" style="width: 150px; height: 150px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">₹{{ product.price }}</p>
+          <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+            <button class="btn btn-success" type="submit">Add to Cart</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}CHARMING BEADS Mugs{% endblock %}
+
+{% block content %}
+<button class="back-btn btn" onclick="window.history.back()">Back</button>
+<h2>Mugs Collection</h2>
+<div>
+    {% for product in mugs %}
+    <div class="product-card">
+        <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}" style="width: 120px; border-radius: 6px; margin-bottom:0.8em;">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <div>₹{{ product.price }}</div>
+        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+            <button class="btn" type="submit">Add to Cart</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

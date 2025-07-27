@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}CHARMING BEADS Checkout{% endblock %}
+
+{% block content %}
+<button class="back-btn btn" onclick="window.history.back()">Back</button>
+<h2>Checkout</h2>
+
+<ul>
+    {% for item in cart_items %}
+        <li>
+            {{ item.product.name }} (x{{ item.quantity }}) – ₹{{ item.product.price * item.quantity }}
+        </li>
+    {% endfor %}
+</ul>
+<div style="margin-top:1.2em; font-size:1.1em;">
+    <div><strong>Subtotal:</strong> ₹{{ subtotal }}</div>
+    <div><strong>Delivery Charges:</strong> ₹{{ delivery_charge }}</div>
+    <div style="border-top:1.5px dashed #fa7ba2; margin:0.85em 0;"></div>
+    <div style="font-size:1.28em; color:#e75480;"><b>Total: ₹{{ total_price }}</b></div>
+</div>
+
+<div class="payment-section" style="background:#fff0f6; padding:1em 1.5em; border-radius:8px; margin-top:2em; box-shadow:0 0 6px #fa7ba230;">
+    <h3 style="margin-bottom:0.5em;">Payment Options</h3>
+    <p>Scan for UPI payment:</p>
+    <img src="{{ url_for('static', filename='images/your-upi-qr.png') }}" alt="UPI QR" style="width:190px; border-radius:10px; display:block; margin-bottom:1em;">
+    <p>Or pay to UPI ID:<br>
+    <b style="background:#ffe4ec; color:#e75480; padding:0.3em 0.6em; border-radius:4px;">your-upi-id@bank</b></p>
+</div>
+
+<form style="margin-top:2em; max-width:440px;" action="{{ url_for('place_order') }}" method="post" enctype="multipart/form-data">
+    <label for="name"><b>Your Name:</b></label><br>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="contact"><b>Contact Number:</b></label><br>
+    <input type="text" id="contact" name="contact" pattern="\d{10,15}" title="Please enter a valid contact number" required><br><br>
+    
+    <label for="email"><b>Email:</b></label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="address"><b>Full Address:</b></label><br>
+    <textarea id="address" name="address" rows="4" style="width: 100%;" required></textarea><br><br>
+
+    <label for="upi_txn"><b>UPI Transaction Reference:</b></label><br>
+    <input type="text" id="upi_txn" name="upi_txn" required><br><br>
+
+    <label for="screenshot"><b>Upload Payment Screenshot (jpg/png):</b></label><br>
+    <input type="file" id="screenshot" name="screenshot" accept=".jpg,.jpeg,.png" required><br><br>
+
+    <button class="btn" type="submit">Place Order</button>
+</form>
+{% endblock %}
